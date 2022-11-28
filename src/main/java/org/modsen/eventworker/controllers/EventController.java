@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/event")
+@RestController
+@RequestMapping("/events")
 public class EventController {
 
     private EventService eventService;
@@ -28,7 +29,7 @@ public class EventController {
         return eventService.findEventById(id);
     }
 
-    @PutMapping("/add")
+    @PostMapping("/add")
     public void registerEvent(Event event) {
         eventService.registerEvent(event);
     }

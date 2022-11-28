@@ -10,29 +10,32 @@ import org.hibernate.Transaction;
 import org.modsen.eventworker.dao.hibernate.EventDAO;
 import org.modsen.eventworker.dao.pojo.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public class EventDAOHibernate implements EventDAO {
     @Autowired
-    private static SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Override
-    public Event findEventById(long id) {
+    public Optional<Event> findEventById(long id) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
-        Event event = null;
+        Event event;
         try {
             tx = session.beginTransaction();
             event = session.get(Event.class,id);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
-            e.printStackTrace();
+            return null;
         } finally {
             session.close();
         }
-        return event;
+        return Optional.ofNullable(event);
     }
 
     @Override
