@@ -1,7 +1,7 @@
 package org.modsen.eventworker.controllers;
 
 import org.modsen.eventworker.dao.pojo.Event;
-import org.modsen.eventworker.dao.pojo.Place;
+import org.modsen.eventworker.enums.SortingParameter;
 import org.modsen.eventworker.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +20,15 @@ public class EventController {
     }
 
     @GetMapping("/getAll")
-    public List<Event> findAllEvents() {
-        return eventService.findAllEvents();
+    public List<Event> findAllEvents(@RequestParam(required = false) SortingParameter sortedByTheme,
+                                     @RequestParam(required = false) SortingParameter sortedByOrganizer,
+                                     @RequestParam(required = false) SortingParameter sortedByTime)
+    {
+        return eventService.findAllEvents(
+                sortedByTheme,
+                sortedByOrganizer,
+                sortedByTime
+        );
     }
 
     @GetMapping("/get")
@@ -30,17 +37,17 @@ public class EventController {
     }
 
     @PostMapping("/add")
-    public void registerEvent(Event event) {
+    public void registerEvent(@RequestBody Event event) {
         eventService.registerEvent(event);
     }
 
     @PatchMapping("/change")
-    public void changeEvent(Event event) {
+    public void changeEvent(@RequestBody Event event) {
         eventService.changeEvent(event);
     }
 
     @DeleteMapping("/delete")
-    public void deleteEvent(Event event) {
+    public void deleteEvent(@RequestBody Event event) {
         eventService.deleteEvent(event);
     }
 

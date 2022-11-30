@@ -1,17 +1,17 @@
 package org.modsen.eventworker.dao.hibernate.implementation;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.modsen.eventworker.dao.hibernate.EventDAO;
 import org.modsen.eventworker.dao.pojo.Event;
+import org.modsen.eventworker.enums.SortingParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +39,16 @@ public class EventDAOHibernate implements EventDAO {
     }
 
     @Override
-    public List<Event> findAllEvents() {
+    public List<Event> findAllEvents(List<SortingParameter> sortingParameters)
+    {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Event> cr = criteriaBuilder.createQuery(Event.class);
         Root<Event> root = cr.from(Event.class);
+        List<Order> orderList = sort(criteriaBuilder,root, sortingParameters);
         cr.select(root);
+        cr.orderBy(orderList);
         List<Event> events = null;
         try {
             tx = session.beginTransaction();
@@ -59,6 +62,35 @@ public class EventDAOHibernate implements EventDAO {
         }
         return events;
     }
+
+    private List<Order> sort(CriteriaBuilder criteriaBuilder, Root<Event> root, List<SortingParameter> sortingParameters) {
+        List<Order> orderList = new ArrayList<>();
+        for (SortingParameter sortingParameter : sortingParameters) {
+            Join join = null;
+            if(sortingParameter.getJoinEntityNames()!=null) {
+                for (String s : sortingParameter.getJoinEntityNames()) {
+                    join = root.join(s);
+                }
+            }
+            if(join!=null) addSortingMethod(orderList,criteriaBuilder,join, sortingParameter, sortingParameter.getSortFields());
+            else addSortingMethod(orderList,criteriaBuilder,root, sortingParameter, sortingParameter.getSortFields());
+        }
+        return orderList;
+    }
+
+    private void addSortingMethod(List<Order> orderList,
+                                  CriteriaBuilder criteriaBuilder,
+                                  From root,
+                                  SortingParameter sortingParameter,
+                                  String... fieldNames)
+    {
+        if(sortingParameter ==null) return;
+        for (String fieldName : fieldNames) {
+            if(sortingParameter == SortingParameter.asc) orderList.add(criteriaBuilder.asc(root.get(fieldName)));
+            else if(sortingParameter == SortingParameter.desc) orderList.add(criteriaBuilder.desc(root.get(fieldName)));
+        }
+    }
+
 
     @Override
     public void saveEvent(Event event) {
