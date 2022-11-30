@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:13.3
+    container_name: "java-postgres"
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "example"
+    ports:
+      - "5432:5432"
+    volumes:
+        - db_folder:/var/lib/postgresql
+  eventworker:
+    build: ../../
+    container_name: "java-eventworker"
+    ports:
+      - "8080:8080"
+volumes:
+    db_folder:

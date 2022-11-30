@@ -1,5 +1,5 @@
 create table event(
-    id int8 primary key,
+    id bigserial primary key,
     theme varchar(255) not null,
     description varchar(1024),
     person_id int8 not null,
@@ -8,14 +8,14 @@ create table event(
 );
 
 create table person(
-    id int8 primary key,
+    id bigserial primary key,
     firstName varchar(255) not null,
     lastName varchar(255) not null,
     age int not null
 );
 
 create table place(
-    id int8 primary key,
+    id bigserial primary key,
     country varchar(255) not null,
     city varchar(255),
     street varchar(255),

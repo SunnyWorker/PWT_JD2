@@ -10,9 +10,9 @@
     </parent>
     <groupId>org.modsen</groupId>
     <artifactId>EventWorker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <version>1.0.0</version>
     <name>EventWorker</name>
+    <packaging>war</packaging>
     <description>EventWorker</description>
     <properties>
         <java.version>17</java.version>
@@ -63,4 +63,12 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
