@@ -1,27 +1,28 @@
 package org.modsen.common.services.implementation;
 
 import org.modsen.common.dao.pojo.Event;
-import org.modsen.common.dao.hibernate.EventDAO;
+import org.modsen.common.dao.hibernate.PartyDAO;
+import org.modsen.common.dao.pojo.Party;
 import org.modsen.common.exceptions.DuplicateEntityException;
 import org.modsen.common.exceptions.NoSuchEntityFoundException;
 import org.modsen.common.services.sorting.SortingParameter;
 import org.modsen.common.services.sorting.enums.SortingMethod;
-import org.modsen.common.services.EventService;
+import org.modsen.common.services.PartyService;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class EventServiceImplementation implements EventService {
+public class PartyServiceImplementation implements PartyService {
 
-    private EventDAO eventDAO;
+    private PartyDAO partyDAO;
 
-    public EventServiceImplementation(EventDAO eventDAO) {
-        this.eventDAO = eventDAO;
+    public PartyServiceImplementation(PartyDAO partyDAO) {
+        this.partyDAO = partyDAO;
     }
 
 
     @Override
-    public List<Event> findAllEvents(SortingMethod[] sortingMethods)
+    public List<Party> findAllParties(SortingMethod[] sortingMethods)
     {
         List<SortingParameter> sortingParameterList = Arrays.stream(sortingMethods)
                 .map(sortingMethod -> new SortingParameter(sortingMethod))
@@ -30,13 +31,14 @@ public class EventServiceImplementation implements EventService {
         addCustomSort(sortingParameterList);
 
         List<SortingParameter> actualSortingParameters = sortingParameterList.stream()
-                .filter(sortingParameter -> sortingParameter!=null)
+                .filter(sortingParameter -> sortingParameter.getSortingMethod()!=null)
                 .toList();
 
-        return eventDAO.findAllEvents(actualSortingParameters);
+        return partyDAO.findAllParties(actualSortingParameters);
     }
 
     protected void addCustomSort(List<SortingParameter> sortingParameterList) {
+        addJoinEntityNames(sortingParameterList.get(0),"event");
         addSortFields(sortingParameterList.get(0),"theme");
         addJoinEntityNames(sortingParameterList.get(1),"organizer");
         addSortFields(sortingParameterList.get(1),"lastName","firstName");
@@ -54,25 +56,25 @@ public class EventServiceImplementation implements EventService {
     }
 
     @Override
-    public Event findEventById(long id) {
-        return eventDAO.findEventById(id).orElseThrow(()->new NoSuchEntityFoundException("Event with id "+id+" not found!"));
+    public Party findPartyById(long id) {
+        return partyDAO.findPartyById(id).orElseThrow(()->new NoSuchEntityFoundException("Party with id "+id+" not found!"));
     }
 
     @Override
-    public void registerEvent(Event event) {
-        if (event.getId()!=null && eventDAO.findEventById(event.getId()).isPresent())
-            throw new DuplicateEntityException("Event with id "+event.getId()+"already exists!");
-        else eventDAO.saveEvent(event);
+    public void registerParty(Party party) {
+        if (party.getId()!=null && partyDAO.findPartyById(party.getId()).isPresent())
+            throw new DuplicateEntityException("Party with id "+party.getId()+"already exists!");
+        else partyDAO.saveParty(party);
     }
 
     @Override
-    public void changeEvent(Event event) {
-        if(event.getId()!=null && findEventById(event.getId())!=null)
-            eventDAO.saveEvent(event);
+    public void changeParty(Party party) {
+        if(party.getId()!=null && findPartyById(party.getId())!=null)
+            partyDAO.saveParty(party);
     }
 
     @Override
-    public void deleteEvent(Event event) {
-        eventDAO.removeEvent(event);
+    public void deleteParty(Party party) {
+        partyDAO.removeParty(party);
     }
 }

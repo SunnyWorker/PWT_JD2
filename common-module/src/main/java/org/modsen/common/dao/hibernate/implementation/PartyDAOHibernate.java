@@ -5,8 +5,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.modsen.common.dao.hibernate.EventDAO;
+import org.modsen.common.dao.hibernate.PartyDAO;
 import org.modsen.common.dao.pojo.Event;
+import org.modsen.common.dao.pojo.Party;
 import org.modsen.common.services.sorting.enums.SortingMethod;
 import org.modsen.common.services.sorting.SortingParameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class EventDAOHibernate implements EventDAO {
+public class PartyDAOHibernate implements PartyDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
-    public Optional<Event> findEventById(long id) {
+    public Optional<Party> findPartyById(long id) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
-        Event event;
+        Party party;
         try {
             tx = session.beginTransaction();
-            event = session.get(Event.class,id);
+            party = session.get(Party.class,id);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
@@ -34,24 +35,24 @@ public class EventDAOHibernate implements EventDAO {
         } finally {
             session.close();
         }
-        return Optional.ofNullable(event);
+        return Optional.ofNullable(party);
     }
 
     @Override
-    public List<Event> findAllEvents(List<SortingParameter> sortingParameters)
+    public List<Party> findAllParties(List<SortingParameter> sortingParameters)
     {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<Event> cr = criteriaBuilder.createQuery(Event.class);
-        Root<Event> root = cr.from(Event.class);
+        CriteriaQuery<Party> cr = criteriaBuilder.createQuery(Party.class);
+        Root<Party> root = cr.from(Party.class);
         List<Order> orderList = sort(criteriaBuilder,root, sortingParameters);
         cr.select(root);
         cr.orderBy(orderList);
-        List<Event> events = null;
+        List<Party> parties = null;
         try {
             tx = session.beginTransaction();
-            events = session.createQuery(cr).getResultList();
+            parties = session.createQuery(cr).getResultList();
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
@@ -59,10 +60,10 @@ public class EventDAOHibernate implements EventDAO {
         } finally {
             session.close();
         }
-        return events;
+        return parties;
     }
 
-    protected List<Order> sort(CriteriaBuilder criteriaBuilder, Root<Event> root, List<SortingParameter> sortingParameters) {
+    protected List<Order> sort(CriteriaBuilder criteriaBuilder, Root<Party> root, List<SortingParameter> sortingParameters) {
         List<Order> orderList = new ArrayList<>();
         Join join;
         for (SortingParameter sortingParameter : sortingParameters) {
@@ -95,12 +96,12 @@ public class EventDAOHibernate implements EventDAO {
 
 
     @Override
-    public void saveEvent(Event event) {
+    public void saveParty(Party party) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            session.persist(event);
+            session.persist(party);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
@@ -111,12 +112,12 @@ public class EventDAOHibernate implements EventDAO {
     }
 
     @Override
-    public void removeEvent(Event event) {
+    public void removeParty(Party party) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            session.remove(event);
+            session.remove(party);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();

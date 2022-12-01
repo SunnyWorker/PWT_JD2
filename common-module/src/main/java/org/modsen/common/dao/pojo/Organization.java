@@ -1,22 +1,19 @@
 package org.modsen.common.dao.pojo;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.sql.Date;
-import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
-public class Event {
+public class Organization {
     @Id
     private Long id;
     @Column(nullable = false)
-    private String theme;
+    private String name;
     @Column(length = 1024)
     private String description;
-    @Column(nullable = false)
-    private Date date;
 }
