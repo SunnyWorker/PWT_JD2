@@ -1,7 +1,7 @@
 package org.modsen.eventworker.controllers;
 
 import org.modsen.eventworker.dao.pojo.Event;
-import org.modsen.eventworker.enums.SortingParameter;
+import org.modsen.eventworker.services.sorting.enums.SortingMethod;
 import org.modsen.eventworker.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +20,9 @@ public class EventController {
     }
 
     @GetMapping("/getAll")
-    public List<Event> findAllEvents(@RequestParam(required = false) SortingParameter sortedByTheme,
-                                     @RequestParam(required = false) SortingParameter sortedByOrganizer,
-                                     @RequestParam(required = false) SortingParameter sortedByTime)
+    public List<Event> findAllEvents(@RequestParam(required = false) SortingMethod sortedByTheme,
+                                     @RequestParam(required = false) SortingMethod sortedByOrganizer,
+                                     @RequestParam(required = false) SortingMethod sortedByTime)
     {
         return eventService.findAllEvents(
                 sortedByTheme,

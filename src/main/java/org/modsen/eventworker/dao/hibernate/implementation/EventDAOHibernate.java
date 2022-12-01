@@ -7,7 +7,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.modsen.eventworker.dao.hibernate.EventDAO;
 import org.modsen.eventworker.dao.pojo.Event;
-import org.modsen.eventworker.enums.SortingParameter;
+import org.modsen.eventworker.services.sorting.SortingParameter;
+import org.modsen.eventworker.services.sorting.enums.SortingMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -63,10 +64,11 @@ public class EventDAOHibernate implements EventDAO {
         return events;
     }
 
-    private List<Order> sort(CriteriaBuilder criteriaBuilder, Root<Event> root, List<SortingParameter> sortingParameters) {
+    protected List<Order> sort(CriteriaBuilder criteriaBuilder, Root<Event> root, List<SortingParameter> sortingParameters) {
         List<Order> orderList = new ArrayList<>();
+        Join join;
         for (SortingParameter sortingParameter : sortingParameters) {
-            Join join = null;
+            join = null;
             if(sortingParameter.getJoinEntityNames()!=null) {
                 for (String s : sortingParameter.getJoinEntityNames()) {
                     join = root.join(s);
@@ -78,16 +80,18 @@ public class EventDAOHibernate implements EventDAO {
         return orderList;
     }
 
-    private void addSortingMethod(List<Order> orderList,
+    protected void addSortingMethod(List<Order> orderList,
                                   CriteriaBuilder criteriaBuilder,
-                                  From root,
+                                  From from,
                                   SortingParameter sortingParameter,
                                   String... fieldNames)
     {
-        if(sortingParameter ==null) return;
+        if(sortingParameter==null) return;
         for (String fieldName : fieldNames) {
-            if(sortingParameter == SortingParameter.asc) orderList.add(criteriaBuilder.asc(root.get(fieldName)));
-            else if(sortingParameter == SortingParameter.desc) orderList.add(criteriaBuilder.desc(root.get(fieldName)));
+            if(sortingParameter.getSortingMethod() == SortingMethod.asc)
+                orderList.add(criteriaBuilder.asc(from.get(fieldName)));
+            else if(sortingParameter.getSortingMethod() == SortingMethod.desc)
+                orderList.add(criteriaBuilder.desc(from.get(fieldName)));
         }
     }
 

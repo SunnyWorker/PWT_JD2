@@ -2,7 +2,8 @@ package org.modsen.eventworker.services.implementation;
 
 import org.modsen.eventworker.dao.hibernate.EventDAO;
 import org.modsen.eventworker.dao.pojo.Event;
-import org.modsen.eventworker.enums.SortingParameter;
+import org.modsen.eventworker.services.sorting.SortingParameter;
+import org.modsen.eventworker.services.sorting.enums.SortingMethod;
 import org.modsen.eventworker.exceptions.DuplicateEntityException;
 import org.modsen.eventworker.exceptions.NoSuchEntityFoundException;
 import org.modsen.eventworker.services.EventService;
@@ -24,17 +25,26 @@ public class EventServiceImplementation implements EventService {
 
 
     @Override
-    public List<Event> findAllEvents(SortingParameter... sortingParameters)
+    public List<Event> findAllEvents(SortingMethod[] sortingMethods)
     {
-        addSortFields(sortingParameters[0],"theme");
-        addJoinEntityNames(sortingParameters[1],"organizer");
-        addSortFields(sortingParameters[1],"lastName","firstName");
-        addSortFields(sortingParameters[2],"time");
-        List<SortingParameter> actualSortingParameters = Arrays
-                .stream(sortingParameters)
+        List<SortingParameter> sortingParameterList = Arrays.stream(sortingMethods)
+                .map(sortingMethod -> new SortingParameter(sortingMethod))
+                .toList();
+
+        addCustomSort(sortingParameterList);
+
+        List<SortingParameter> actualSortingParameters = sortingParameterList.stream()
                 .filter(sortingParameter -> sortingParameter!=null)
                 .toList();
+
         return eventDAO.findAllEvents(actualSortingParameters);
+    }
+
+    protected void addCustomSort(List<SortingParameter> sortingParameterList) {
+        addSortFields(sortingParameterList.get(0),"theme");
+        addJoinEntityNames(sortingParameterList.get(1),"organizer");
+        addSortFields(sortingParameterList.get(1),"lastName","firstName");
+        addSortFields(sortingParameterList.get(2),"time");
     }
 
     protected void addSortFields(SortingParameter sortingParameter, String...sortFields) {
