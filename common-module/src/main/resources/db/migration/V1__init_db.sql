@@ -7,13 +7,6 @@ create table Event
     primary key (id)
 );
 
-create table invitations
-(
-    party_id  bigint not null,
-    person_id bigint not null,
-    primary key (party_id, person_id)
-);
-
 create table Organization
 (
     id          bigserial       not null,
@@ -54,9 +47,16 @@ create table Place
     primary key (id)
 );
 
-alter table if exists invitations add constraint FK_invitations_person foreign key (person_id) references Person;
-alter table if exists invitations add constraint FK_invitations_party foreign key (party_id) references Party;
+create table Invitation
+(
+    person_id bigint not null,
+    party_id  bigint not null,
+    primary key (person_id,party_id)
+);
+
 alter table if exists Party add constraint FK_party_event foreign key (event_id) references Event;
 alter table if exists Party add constraint FK_party_person foreign key (person_id) references Person;
+alter table if exists Invitation add constraint FK_invitation_person foreign key (person_id) references Person;
+alter table if exists Invitation add constraint FK_invitation_party foreign key (party_id) references Party;
 alter table if exists Party add constraint FK_party_place foreign key (place_id) references Place;
 alter table if exists Person add constraint FK_person_organization foreign key (organization_id) references Organization;

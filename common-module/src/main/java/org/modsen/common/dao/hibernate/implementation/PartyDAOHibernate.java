@@ -17,8 +17,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class PartyDAOHibernate implements PartyDAO {
-    @Autowired
     private SessionFactory sessionFactory;
+
+    public PartyDAOHibernate(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Optional<Party> findPartyById(long id) {

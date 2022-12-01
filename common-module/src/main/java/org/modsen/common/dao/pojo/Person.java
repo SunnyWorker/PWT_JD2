@@ -13,6 +13,7 @@ import java.util.List;
 @JsonIgnoreProperties({"parties"})
 public class Person {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String firstName;
@@ -23,6 +24,4 @@ public class Person {
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
-    @ManyToMany(mappedBy = "guests")
-    private List<Party> parties;
 }

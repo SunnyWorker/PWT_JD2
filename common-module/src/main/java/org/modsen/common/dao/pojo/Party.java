@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 public class Party {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "event_id")
@@ -24,9 +25,4 @@ public class Party {
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "invitations",
-                joinColumns = @JoinColumn(name = "party_id"),
-                inverseJoinColumns = @JoinColumn(name = "person_id"))
-    private Set<Person> guests;
 }
