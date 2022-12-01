@@ -1,6 +1,5 @@
 package org.modsen.web.controllers;
 
-import org.modsen.common.dao.pojo.Event;
 import org.modsen.common.dao.pojo.Party;
 import org.modsen.common.services.PartyService;
 import org.modsen.common.services.sorting.enums.SortingMethod;
@@ -13,7 +12,7 @@ import java.util.List;
 @RequestMapping("/parties")
 public class PartyController {
 
-    private PartyService partyService;
+    private final PartyService partyService;
 
     @Autowired
     public PartyController(PartyService partyService) {

@@ -1,10 +1,8 @@
 package org.modsen.web.controllers;
 
 import org.modsen.common.dao.pojo.Invitation;
-import org.modsen.common.dao.pojo.Party;
 import org.modsen.common.dao.pojo.Person;
 import org.modsen.common.services.PersonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/people")
 public class PersonController {
-    private PersonService personService;
+    private final PersonService personService;
 
     public PersonController(PersonService personService) {
         this.personService = personService;

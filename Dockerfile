@@ -1,6 +1,7 @@
 FROM molgenis/maven-jdk17
 COPY ./ ./
-RUN mvn clean package -DskipTests
-ENTRYPOINT ["java","-jar","target/EventWorker-1.0.0.war"]
+RUN (cd ./common-module && mvn clean install)
+RUN (cd ../web && mvn clean package -DskipTests)
+ENTRYPOINT ["java","-jar","web/target/web-0.0.1-SNAPSHOT.war"]
 
 
