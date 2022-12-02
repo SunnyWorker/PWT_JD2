@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PartyDAOHibernate implements PartyDAO {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public PartyDAOHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -104,6 +104,7 @@ public class PartyDAOHibernate implements PartyDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            session.merge(party);
             session.persist(party);
             tx.commit();
         } catch (HibernateException e) {
@@ -120,6 +121,7 @@ public class PartyDAOHibernate implements PartyDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            session.merge(party);
             session.remove(party);
             tx.commit();
         } catch (HibernateException e) {

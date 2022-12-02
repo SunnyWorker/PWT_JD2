@@ -9,7 +9,7 @@ import org.modsen.common.dao.pojo.Invitation;
 
 public class InvitationDAOHibernate implements InvitationDAO {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public InvitationDAOHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -21,6 +21,7 @@ public class InvitationDAOHibernate implements InvitationDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            session.merge(invitation);
             session.persist(invitation);
             tx.commit();
         } catch (HibernateException e) {

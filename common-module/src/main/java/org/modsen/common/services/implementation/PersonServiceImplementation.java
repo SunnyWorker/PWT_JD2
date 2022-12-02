@@ -12,8 +12,8 @@ import java.util.List;
 
 public class PersonServiceImplementation implements PersonService {
 
-    private PersonDAO personDAO;
-    private InvitationDAO invitationDAO;
+    private final PersonDAO personDAO;
+    private final InvitationDAO invitationDAO;
 
     public PersonServiceImplementation(PersonDAO personDAO, InvitationDAO invitationDAO) {
         this.personDAO = personDAO;

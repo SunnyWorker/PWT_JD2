@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PersonDAOHibernate implements PersonDAO {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public PersonDAOHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -70,6 +70,7 @@ public class PersonDAOHibernate implements PersonDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            session.merge(person);
             session.persist(person);
             tx.commit();
         } catch (HibernateException e) {
@@ -86,6 +87,7 @@ public class PersonDAOHibernate implements PersonDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            session.merge(person);
             session.remove(person);
             tx.commit();
         } catch (HibernateException e) {

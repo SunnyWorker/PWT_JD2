@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PartyServiceImplementation implements PartyService {
 
-    private PartyDAO partyDAO;
+    private final PartyDAO partyDAO;
 
     public PartyServiceImplementation(PartyDAO partyDAO) {
         this.partyDAO = partyDAO;
